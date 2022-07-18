@@ -1,0 +1,51 @@
+name: Run
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore: 
+    - ".github/**"
+
+  workflow_dispatch:
+env:
+  GitHubMail: "McLarenGTRX97@Gmail.Com"
+  GitHubName: "McLarenGTRX97"
+  
+jobs:
+
+  run:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - 
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.gh_token }}
+          
+    - uses: actions/checkout@v3
+    - name: Pull and RUN
+      timeout-minutes: 350
+      continue-on-error: true
+      run: |
+        docker run --pull=always ghcr.io/mclarengtrx97/gtr:main
+
+    - name: Set Git Configs & Secrets
+      run: |
+           git config --global user.email ${GitHubMail}
+           git config --global user.name ${GitHubName}
+           git config --global credential.helper store
+           echo "https://${GitHubName}:${{ secrets.GH_TOKEN }}@github.com" > ~/.git-credentials
+
+    - name: Loop workflow
+      continue-on-error: true
+      run: |
+           git clone https://${{ secrets.GH_TOKEN }}@github.com/${GITHUB_REPOSITORY} loop
+           cd loop || exit 1
+           echo $(( RANDOM - ( RANDOM % RANDOM ) )) > looper.txt
+           git add looper.txt
+           git commit -m "Workflow : Loop at $(date -u +%D-%T%P)"
+           git push -q https://${{ secrets.GH_TOKEN }}@github.com/${GITHUB_REPOSITORY} HEAD:main
