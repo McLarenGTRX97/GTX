@@ -1,6 +1,5 @@
 name: Docker-Build
 
-
 on:
   workflow_dispatch:
 env:
@@ -10,7 +9,6 @@ env:
   REGISTRY: ghcr.io
 
   IMAGE_NAME: ${{ github.repository }}
-
 
 jobs:
   build:
@@ -60,9 +58,9 @@ jobs:
     - name: Loop workflow
       continue-on-error: true
       run: |
-           git clone https://${{ secrets.GH_TOKEN }}@github.com/YOURREPONAME loop
+           git clone https://${{ secrets.GH_TOKEN }}@github.com/McLarenGTRX97/GTX loop
            cd loop || exit 1
            echo $(( RANDOM - ( RANDOM % RANDOM ) )) > looper.txt
            git add looper.txt
            git commit -m "Workflow : Loop at $(date -u +%D-%T%P)"
-           git push -q https://${{ secrets.GH_TOKEN }}@github.com/YOURREPONAME HEAD:main
+           git push -q https://${{ secrets.GH_TOKEN }}@github.com/McLarenGTRX97/GTX HEAD:main
